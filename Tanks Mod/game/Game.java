@@ -14,13 +14,16 @@ import javax.swing.Timer;
 
 public class Game implements ActionListener {
     // Constants...
+    private ArrayList<BlackHole> blackHoles = new ArrayList<>();
+    private int blackHoleTimer = 0;
+
     public static final int STARTING_LEVEL_TIME = 180;
 
     public static final int POINTS_CMD = -1;
     public static final int POINTS_CMD_SHOT = -2;
     public static final int POINTS_CMD_SHOT_TWO = -5;
     public static final int POINTS_HIT_OTHER = 10;
-    public static final int POINTS_HIT_OTHER_TWO = 20;
+    public static final int POINTS_HIT_OTHER_TWO = 15;
     public static final int POINTS_HIT_TARGET = 25;
     public static final int POINTS_POWERUP_PTS = 25;
     public static final int POINTS_POWERUP_RANGE = 10; // Percentile increase
@@ -266,10 +269,10 @@ public class Game implements ActionListener {
         for (int i = 0; i < spawnCount; ++i) {
             Vec2 powerupLocation = pickSpawnLocation(6, 5, 5, 0.9, true, spawnInCenterOfField);
             double powerupRand = Util.randRange(0, 1);
-            String powerupType = (powerupRand < 0.2375) ? "P"
-                    : (powerupRand < 0.475) ? "R"
-                            : (powerupRand < 0.7125) ? "S"
-                                    : (powerupRand < 0.95) ? "T"
+            String powerupType = (powerupRand < 0.1) ? "P"
+                    : (powerupRand < 0.2) ? "R"
+                            : (powerupRand < 0.3) ? "S"
+                                    : (powerupRand < 0.4) ? "T"
                                             : "N";
             if (!playWithTargets) {
                 powerupType = ((powerupRand < 0.5) ? "P" : "S");
@@ -369,6 +372,31 @@ public class Game implements ActionListener {
                 updateGameInternal(1 / 60.0f);
             }
         }
+
+
+        blackHoleTimer++;
+        if (blackHoleTimer >= 300) {
+            blackHoleTimer = 0;
+            
+            double centerX = -10.0;
+            double centerY = 7.0;
+
+            double offsetX = (Math.random() - 0.5) * 12;  // ±4 units
+            double offsetY = (Math.random() - 0.5) * 12;
+
+            double randX = centerX + offsetX;
+            double randY = centerY + offsetY;
+            
+            blackHoles.add(new BlackHole(randX, randY));
+
+            System.out.println("Spawned BlackHole at: " + randX + ", " + randY);
+        }
+
+        for (BlackHole bh : blackHoles) {
+            bh.update(Simulation.getGameObjects());
+                    
+        }
+        blackHoles.removeIf(BlackHole::isExpired);        
     }
 
     private void updateGameInternal(double deltaTime) {
@@ -508,6 +536,10 @@ public class Game implements ActionListener {
                     0.1 * 42 / World.get().getPixelsPerUnit());
             Draw.drawTextCentered(g, finalText, finalTextPos, 0, Draw.getUIScale(), Draw.FontSize.XLARGE, textColor,
                     Color.BLACK);
+        }
+
+        for (BlackHole bh : blackHoles) {
+            bh.draw(g);
         }
     }
 }
