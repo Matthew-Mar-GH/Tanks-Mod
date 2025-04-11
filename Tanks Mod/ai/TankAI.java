@@ -7,7 +7,7 @@ import game.Vec2;
 
 public class TankAI extends TankAIBase {
     public String getPlayerName() {
-        return "Matthew"; 
+        return "Matthew";
     }
 
     public int getPlayerPeriod() {
@@ -69,7 +69,7 @@ public class TankAI extends TankAIBase {
     }
 
     public void shoot(double x, double y) {
-        queueCmd("shoot", new Vec2(x, y));
+        queueCmd("shoot2", new Vec2(x, y));
     }
 
     public void turn(double x, double y) {
