@@ -48,6 +48,17 @@ public class Simulation {
         return powerup;
     }
 
+    protected Mine createMine(Vec2 pos) {
+        Mine mine = new Mine(pos);
+        this.gameObjects.add(mine);
+        return mine;
+    }
+
+    public void createRandMine(Vec2 pos) {
+        GameObject mine = new EndGameTarget(pos);
+        this.gameObjects.add(mine);
+    }
+
     protected Ammo createAmmo(int playerIdx, Vec2 pos, Vec2 dir, double maxRange) {
         Ammo ammo = new Ammo(playerIdx, pos, dir, maxRange);
         this.gameObjects.add(ammo);

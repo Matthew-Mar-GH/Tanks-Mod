@@ -291,6 +291,13 @@ public class Tank extends GameObject {
 		}
 	}
 
+	protected void onCollision(Mine mine) {
+		mine.timeTillDeath = Math.max(mine.timeTillDeath, 0.0001);
+		kickBackTank(Vec2.subtract(mine.pos, this.pos).unit());
+		Game.get().removePoints(Game.POINTS_MINE, this.playerIdx);
+		Util.log("(mine: score " + Game.POINTS_MINE + ")");
+	}
+
 	protected boolean execPlayerAI() {
 		// Basic checks...
 		if (ai == null) {

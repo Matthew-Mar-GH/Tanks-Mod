@@ -21,12 +21,12 @@ import javax.swing.Timer;
 
 public class World extends JPanel implements ActionListener, MouseListener {
     // Singleton...
-	private static World instance = null;
-	public static synchronized World get()
-    {
+    private static World instance = null;
+
+    public static synchronized World get() {
         if (instance == null)
             instance = new World();
-  
+
         return instance;
     }
 
@@ -37,7 +37,7 @@ public class World extends JPanel implements ActionListener, MouseListener {
     public static final Color COLOR_GRID = new Color(193, 154, 127);
     public static final Color COLOR_SHADOW = new Color(110, 110, 110);
     public static final Color COLOR_SHADOW_TEXT = new Color(60, 60, 60);
-    public static final int RENDER_TIMER_PERIOD = 16;  // In milliseconds
+    public static final int RENDER_TIMER_PERIOD = 16; // In milliseconds
 
     // Member variables...
     private Vec2 origin = new Vec2(0, 0);
@@ -45,14 +45,26 @@ public class World extends JPanel implements ActionListener, MouseListener {
     private double pixelsPerUnit = 1;
     private BufferedImage bckGndImage = null;
     private Timer renderTimer;
+    private double centerX = FIELD_BORDER + canvasSize.x / 2;
+    private double centerY = FIELD_BORDER_TOP + canvasSize.y / 2;
 
     // Accessors...
     public Vec2 getOrigin() {
         return origin;
     }
+
+    public double getCenterX() {
+        return centerX;
+    }
+
+    public double getCenterY() {
+        return centerY;
+    }
+
     public Vec2 getCanvasSize() {
         return canvasSize;
     }
+
     public double getPixelsPerUnit() {
         return pixelsPerUnit;
     }
@@ -79,8 +91,8 @@ public class World extends JPanel implements ActionListener, MouseListener {
 
         // Background texture...
         // try {
-        //     bckGndImage = ImageIO.read(new File("textures/ground.png"));
-        // } 
+        // bckGndImage = ImageIO.read(new File("textures/ground.png"));
+        // }
         // catch (IOException e) {
         // }
 
@@ -105,23 +117,26 @@ public class World extends JPanel implements ActionListener, MouseListener {
     // Mouse events...
     public void mousePressed(MouseEvent event) {
     }
+
     public void mouseReleased(MouseEvent event) {
     }
+
     public void mouseEntered(MouseEvent event) {
     }
+
     public void mouseExited(MouseEvent event) {
     }
+
     public void mouseClicked(MouseEvent event) {
         // Double click restarts it...
         if (event.getClickCount() == 2 && !event.isConsumed()) {
             Game.get().onLevelSetup();
-        }
-        else if ((event.getClickCount() == 1) && Game.get().isGameActive()) {
+        } else if ((event.getClickCount() == 1) && Game.get().isGameActive()) {
             // Pause/unpause the game...
             Game.get().setGamePause(!Game.get().isGamePaused());
         }
     }
-    
+
     // Draw functions...
     private void drawGrid(Graphics2D g) {
         g.setTransform(Draw.getBaseTransform());
@@ -129,13 +144,14 @@ public class World extends JPanel implements ActionListener, MouseListener {
         g.setColor(COLOR_GRID);
         for (int i = 0; i <= canvasSize.x; i += pixelsPerUnit) {
             int x = FIELD_BORDER + i;
-            g.drawLine(x, FIELD_BORDER_TOP, x, FIELD_BORDER_TOP + (int)canvasSize.y);
-		}
-		for (int i = 0; i <= canvasSize.y; i += pixelsPerUnit) {
+            g.drawLine(x, FIELD_BORDER_TOP, x, FIELD_BORDER_TOP + (int) canvasSize.y);
+        }
+        for (int i = 0; i <= canvasSize.y; i += pixelsPerUnit) {
             int y = getHeight() - FIELD_BORDER - i;
-            g.drawLine(FIELD_BORDER, y, FIELD_BORDER + (int)canvasSize.x, y);
-		}
+            g.drawLine(FIELD_BORDER, y, FIELD_BORDER + (int) canvasSize.x, y);
+        }
     }
+
     private void drawWorld(Graphics2D g) {
         // Setup...
         Draw.beginRender(g);
@@ -158,14 +174,18 @@ public class World extends JPanel implements ActionListener, MouseListener {
         // Background...
         if (bckGndImage != null) {
             Vec2 maxUnitsPixels = Util.toPixels(Util.maxCoordFrameUnits());
-            g.drawImage(bckGndImage, (int)origin.x, (int)origin.y, (int)(maxUnitsPixels.x - origin.x), (int)(maxUnitsPixels.y - origin.y), null);
+            g.drawImage(bckGndImage, (int) origin.x, (int) origin.y, (int) (maxUnitsPixels.x - origin.x),
+                    (int) (maxUnitsPixels.y - origin.y), null);
         } else {
             g.setColor(COLOR_BACKGROUND);
-            g.fillRect(FIELD_BORDER, FIELD_BORDER_TOP, getWidth() - FIELD_BORDER * 2, getHeight() - FIELD_BORDER - FIELD_BORDER_TOP);
+            g.fillRect(FIELD_BORDER, FIELD_BORDER_TOP, getWidth() - FIELD_BORDER * 2,
+                    getHeight() - FIELD_BORDER - FIELD_BORDER_TOP);
         }
-        g.setColor(!Game.get().isGamePaused() ? (Game.get().isGameActive() ? Color.DARK_GRAY : Color.LIGHT_GRAY) : Color.RED);
+        g.setColor(!Game.get().isGamePaused() ? (Game.get().isGameActive() ? Color.DARK_GRAY : Color.LIGHT_GRAY)
+                : Color.RED);
         g.setStroke(new BasicStroke(2));
-        g.drawRect(FIELD_BORDER, FIELD_BORDER_TOP, getWidth() - FIELD_BORDER * 2, getHeight() - FIELD_BORDER - FIELD_BORDER_TOP);
+        g.drawRect(FIELD_BORDER, FIELD_BORDER_TOP, getWidth() - FIELD_BORDER * 2,
+                getHeight() - FIELD_BORDER - FIELD_BORDER_TOP);
 
         // Loop twice, first for shadow, then for geometry...
         for (int pass = 0; pass < 2; ++pass) {
@@ -173,14 +193,16 @@ public class World extends JPanel implements ActionListener, MouseListener {
             if (pass == 1) {
                 drawGrid(g);
             }
-            
+
             // PowerUps...
             ArrayList<GameObject> gameObjects = Simulation.getGameObjects();
             for (int i = 0; i < gameObjects.size(); ++i) {
                 GameObject gameObject = gameObjects.get(i);
                 if (gameObject instanceof PowerUp) {
-                    if (pass == 0) gameObject.drawShadow(g); 
-                    else gameObject.draw(g);
+                    if (pass == 0)
+                        gameObject.drawShadow(g);
+                    else
+                        gameObject.draw(g);
                 }
             }
 
@@ -188,26 +210,42 @@ public class World extends JPanel implements ActionListener, MouseListener {
             for (int i = 0; i < gameObjects.size(); ++i) {
                 GameObject gameObject = gameObjects.get(i);
                 if (gameObject instanceof Target) {
-                    if (pass == 0) gameObject.drawShadow(g); 
-                    else gameObject.draw(g);
+                    if (pass == 0)
+                        gameObject.drawShadow(g);
+                    else
+                        gameObject.draw(g);
                 }
-            }   
-            
+            }
+
+            for (int i = 0; i < gameObjects.size(); ++i) {
+                GameObject gameObject = gameObjects.get(i);
+                if (gameObject instanceof Mine) {
+                    if (pass == 0)
+                        gameObject.drawShadow(g);
+                    else
+                        gameObject.draw(g);
+                }
+            }
+
             // Tanks...
             for (int i = 0; i < gameObjects.size(); ++i) {
                 GameObject gameObject = gameObjects.get(i);
                 if (gameObject instanceof Tank) {
-                    if (pass == 0) gameObject.drawShadow(g); 
-                    else gameObject.draw(g);
+                    if (pass == 0)
+                        gameObject.drawShadow(g);
+                    else
+                        gameObject.draw(g);
                 }
-            }        
+            }
 
             // Ammo...
             for (int i = 0; i < gameObjects.size(); ++i) {
                 GameObject gameObject = gameObjects.get(i);
                 if (gameObject instanceof Ammo) {
-                    if (pass == 0) gameObject.drawShadow(g); 
-                    else gameObject.draw(g);
+                    if (pass == 0)
+                        gameObject.drawShadow(g);
+                    else
+                        gameObject.draw(g);
                 }
             }
         }
@@ -215,10 +253,11 @@ public class World extends JPanel implements ActionListener, MouseListener {
         // Let the game do its drawing...
         Game.get().Draw(g);
     }
+
     public void paint(Graphics g) {
         if (Simulation.get() == null) {
             return;
         }
-        drawWorld((Graphics2D)g);
+        drawWorld((Graphics2D) g);
     }
 }
