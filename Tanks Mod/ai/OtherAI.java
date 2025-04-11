@@ -7,7 +7,7 @@ import game.Vec2;
 
 public class OtherAI extends TankAIBase {
     public String getPlayerName() {
-        return "Matthew"; 
+        return "Unmodded AI (2nd Place Algo.)";
     }
 
     public int getPlayerPeriod() {

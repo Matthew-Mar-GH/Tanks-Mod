@@ -362,13 +362,6 @@ public class Tank extends GameObject {
 			} else {
 				cmd = cmdShootTwo;
 			}
-		} else if (cmdStr.toLowerCase().equals(TankCmd_Nuke.TYPE)) {
-			TankCmd_Nuke cmdNuke = new TankCmd_Nuke(param);
-			if (Vec2.lengthSqr(cmdNuke.dir) < 0.001) {
-				Util.log("INVALID SHOT: Zero direction vector");
-			} else {
-				cmd = cmdNuke;
-			}
 		} else {
 			// Unknown command...
 			Util.log("INVALID COMMAND: " + cmdStr);
