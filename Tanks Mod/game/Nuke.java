@@ -94,7 +94,7 @@ public class Nuke extends Ammo {
             Game.get().awardPoints(Game.POINTS_HIT_OTHER_TWO, this.playerIdx);
             Game.get().removePoints(Game.POINTS_HIT_OTHER_TWO, tank.getPlayerIdx());
             Util.log("(hit tank (nuke): score +" + Game.POINTS_HIT_OTHER_TWO + ")");
-            Util.log("(hit tank (nuke): other score -" + Game.POINTS_CMD_SHOT_TWO + ")");
+            Util.log("(hit tank (nuke): other score " + Game.POINTS_CMD_SHOT_TWO + ")");
 
             // Kick the tank back (if you can)...
             tank.kickBackTank(Vec2.subtract(tank.pos, this.pos).unit());

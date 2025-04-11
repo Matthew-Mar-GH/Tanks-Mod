@@ -16,6 +16,10 @@ public class EndGameTarget extends Target {
         super(pos);
     }
 
+    public String getType() {
+        return "endgame";
+    }
+
     protected void onHitByAmmo(int playerIdx) {
         this.timeTillDeath = Math.max(this.timeTillDeath, 0.0001);
         double timeLeft = Game.get().getLevelTimeRemaining();

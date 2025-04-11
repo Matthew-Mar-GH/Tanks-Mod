@@ -5,8 +5,8 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 public class AmmoSecond extends Ammo {
-  public static final int AMMO_SPEED = 12; // 8 faster
-  public static final double AMMO_RADIUS = 0.30; // 33% increase
+  public static final int AMMO_SPEED = 12; // 4 faster
+  public static final double AMMO_RADIUS = 0.30; // 100% increase
   private static final double AMMO_HEIGHT = 4; // 2.75 to 4
   private static final double AMMO_STROKE_WIDTH = 0.05;
   private static final Color AMMO_COLOR_FILL_0 = new Color(30, 120, 30);
@@ -94,7 +94,7 @@ public class AmmoSecond extends Ammo {
             Game.get().awardPoints(Game.POINTS_HIT_OTHER_TWO, this.playerIdx);
             Game.get().removePoints(Game.POINTS_HIT_OTHER_TWO, tank.getPlayerIdx());
             Util.log("(hit tank (alt): score +" + Game.POINTS_HIT_OTHER_TWO + ")");
-            Util.log("(hit tank (alt): other score -" + Game.POINTS_CMD_SHOT_TWO + ")");
+            Util.log("(hit tank (alt): other score " + Game.POINTS_CMD_SHOT_TWO + ")");
 
             // Kick the tank back (if you can)...
             tank.kickBackTank(Vec2.subtract(tank.pos, this.pos).unit());

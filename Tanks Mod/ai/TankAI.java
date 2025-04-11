@@ -18,13 +18,17 @@ public class TankAI extends TankAIBase {
         boolean isTarget = isClosestTarget();
         Vec2 closestTarget = getClosestTarget();
         Vec2 closestPowerUp = getClosestPowerUp();
-        Vec2 typePowerUp = getTypePowerUp("R", "S");
+        Vec2 typePowerUp = getTypePowerUp("N", "R", "S", "T");
         Vec2 otherTankLocation = getOther().getPos().minus(getTankPos());
         double distanceToTarget = getTankPos().distance(closestTarget);
         Vec2 otherMoveSpeed = getOther().getVel();
-        if (getLevelTimeRemaining() >= 30) {
+        if (getLevelTimeRemaining() >= 50) {
             if (hostile(3)) {
-                shoot(otherTankLocation.x, otherTankLocation.y);
+                if (otherMoveSpeed.x <= 1.0 || otherMoveSpeed.y <= 1.0) {
+                    shootAlt(otherTankLocation.x, otherTankLocation.y);
+                } else {
+                    shoot(otherTankLocation.x, otherTankLocation.y);
+                }
             }
             if (distanceToTarget <= 0.1) {
                 moveToTarget(new Vec2(closestTarget.x + 1, closestTarget.y));
@@ -40,12 +44,16 @@ public class TankAI extends TankAIBase {
             } else {
                 moveToTarget(closestPowerUp);
             }
-        } else if (getLevelTimeRemaining() < 30) {
+        } else if (getLevelTimeRemaining() < 50) {
             if (hostile(5) && (otherMoveSpeed.x <= 1.0 || otherMoveSpeed.y <= 1.0)) {
                 shoot(otherTankLocation.x, otherTankLocation.y);
             }
             if (isTarget) {
-                shoot(closestTarget.x, closestTarget.y);
+                if (hostile(getTankShotRange() * 1.5)) {
+                    shootAlt(closestTarget.x, closestTarget.y);
+                } else {
+                    shoot(closestTarget.x, closestTarget.y);
+                }
             } else {
                 moveToTarget(closestPowerUp);
             }
@@ -69,6 +77,10 @@ public class TankAI extends TankAIBase {
     }
 
     public void shoot(double x, double y) {
+        queueCmd("shoot", new Vec2(x, y));
+    }
+
+    public void shootAlt(double x, double y) {
         queueCmd("shoot2", new Vec2(x, y));
     }
 
@@ -94,7 +106,7 @@ public class TankAI extends TankAIBase {
         return shortestVec;
     }
 
-    public Vec2 getTypePowerUp(String type, String secondChoice) {
+    public Vec2 getTypePowerUp(String type, String secondChoice, String thirdChoice, String fourthChoice) {
         PowerUp[] powerUps = getPowerUps();
         Vec2 selectedPowerUp = null;
         for (int i = 0; i < powerUps.length; i++) {
@@ -106,6 +118,22 @@ public class TankAI extends TankAIBase {
         if (selectedPowerUp == null) {
             for (int i = 0; i < powerUps.length; i++) {
                 if (powerUps[i].getType().equals(secondChoice)) {
+                    selectedPowerUp = powerUps[i].getPos().minus(getTankPos());
+                    break;
+                }
+            }
+        }
+        if (selectedPowerUp == null) {
+            for (int i = 0; i < powerUps.length; i++) {
+                if (powerUps[i].getType().equals(thirdChoice)) {
+                    selectedPowerUp = powerUps[i].getPos().minus(getTankPos());
+                    break;
+                }
+            }
+        }
+        if (selectedPowerUp == null) {
+            for (int i = 0; i < powerUps.length; i++) {
+                if (powerUps[i].getType().equals(fourthChoice)) {
                     selectedPowerUp = powerUps[i].getPos().minus(getTankPos());
                     break;
                 }
@@ -146,6 +174,9 @@ public class TankAI extends TankAIBase {
                     shortest = distance;
                     shortestIndex = i;
                     shortestVec = targets[shortestIndex].getPos().minus(getTankPos());
+                }
+                if (targets[i].getType().equals("endgame")) {
+                    return targets[i].getPos().minus(getTankPos());
                 }
             }
         }

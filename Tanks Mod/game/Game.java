@@ -20,7 +20,7 @@ public class Game implements ActionListener {
     public static final int POINTS_CMD_SHOT = -2;
     public static final int POINTS_CMD_SHOT_TWO = -5;
     public static final int POINTS_HIT_OTHER = 10;
-    public static final int POINTS_HIT_OTHER_TWO = 15;
+    public static final int POINTS_HIT_OTHER_TWO = 20;
     public static final int POINTS_HIT_TARGET = 25;
     public static final int POINTS_POWERUP_PTS = 25;
     public static final int POINTS_POWERUP_RANGE = 10; // Percentile increase
@@ -266,10 +266,10 @@ public class Game implements ActionListener {
         for (int i = 0; i < spawnCount; ++i) {
             Vec2 powerupLocation = pickSpawnLocation(6, 5, 5, 0.9, true, spawnInCenterOfField);
             double powerupRand = Util.randRange(0, 1);
-            String powerupType = (powerupRand < 0.1) ? "P"
-                    : (powerupRand < 0.2) ? "R"
-                            : (powerupRand < 0.3) ? "S"
-                                    : (powerupRand < 0.4) ? "T"
+            String powerupType = (powerupRand < 0.2375) ? "P"
+                    : (powerupRand < 0.475) ? "R"
+                            : (powerupRand < 0.7125) ? "S"
+                                    : (powerupRand < 0.95) ? "T"
                                             : "N";
             if (!playWithTargets) {
                 powerupType = ((powerupRand < 0.5) ? "P" : "S");

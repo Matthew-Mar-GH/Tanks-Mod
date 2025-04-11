@@ -1,5 +1,5 @@
 package game;
-import game.Target;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 
@@ -22,16 +22,20 @@ public class Target extends GameObject {
 		return radius;
 	}
 
+	public String getType() {
+		return "regular";
+	}
+
 	// Member functions (methods)...
-    protected Target(Vec2 pos) {
+	protected Target(Vec2 pos) {
 		// Parent...
 		super();
 
 		// Defaults...
-        this.pos = pos;
+		this.pos = pos;
 		this.radius = TARGET_RADIUS;
 		this.timeTillDeath = 0;
-    }
+	}
 
 	public static int getTargets() {
 		return numTargets;
@@ -39,27 +43,27 @@ public class Target extends GameObject {
 
 	protected void destroy() {
 		// Super...
-		super.destroy();		
+		super.destroy();
 	}
-	
+
 	protected void onHitByAmmo(int playerIdx) {
 		// Trigger death spiral...
 		this.timeTillDeath = Math.max(this.timeTillDeath, 0.0001);
-		
+
 		// Give up the points...
 		Game.get().awardPoints(Game.POINTS_HIT_TARGET, playerIdx);
 		Util.log("(hit target: score +" + Game.POINTS_HIT_TARGET + ")");
 	}
-	
+
 	protected boolean shouldBeCulled() {
 		// Check death timer...
 		if (this.timeTillDeath >= 1) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	protected void update(double deltaTime) {
 		// Super...
 		super.update(deltaTime);
@@ -71,22 +75,23 @@ public class Target extends GameObject {
 		}
 	}
 
-    protected double calcDrawScale(int ringIdx) {
+	protected double calcDrawScale(int ringIdx) {
 		double startUpRingFactor = (ringIdx == 0) ? 2 : ((ringIdx == 1) ? 1.5 : 1);
 		double startupScalar = Math.min(timeSinceBorn * startUpRingFactor, 1);
 		return startupScalar * super.calcDrawScale();
-	}	
+	}
 
-    protected void drawShadow(Graphics2D g) {
+	protected void drawShadow(Graphics2D g) {
 		// Setup...
 		double scale = calcDrawScale(0);
 		Color colorShadow = Util.colorLerp(World.COLOR_BACKGROUND, World.COLOR_SHADOW, timeSinceBorn * 2.0f);
 
 		// Body...
-		Draw.drawRectShadow(g, this.pos, calcDrawHeight(TARGET_HEIGHT, scale), new Vec2(TARGET_RADIUS, TARGET_RADIUS), scale, colorShadow, TARGET_RADIUS * 2);
-    }
+		Draw.drawRectShadow(g, this.pos, calcDrawHeight(TARGET_HEIGHT, scale), new Vec2(TARGET_RADIUS, TARGET_RADIUS),
+				scale, colorShadow, TARGET_RADIUS * 2);
+	}
 
-    protected void draw(Graphics2D g) {
+	protected void draw(Graphics2D g) {
 		// Setup...
 		double height = calcDrawHeight(TARGET_HEIGHT, calcDrawScale());
 
@@ -96,9 +101,12 @@ public class Target extends GameObject {
 		Color colorStroke = Util.colorLerp(World.COLOR_BACKGROUND, TARGET_COLOR_STROKE, timeSinceBorn * 2.0f);
 
 		// Body...
-			Draw.drawRect(g, this.pos, height, new Vec2(TARGET_RADIUS, TARGET_RADIUS), calcDrawScale(0), colorFillRed, colorStroke, TARGET_STROKE_WIDTH, TARGET_RADIUS * 2);
-			Draw.drawRect(g, this.pos, height, (new Vec2(TARGET_RADIUS, TARGET_RADIUS)).multiply(0.66), calcDrawScale(1), colorFillWhite, colorStroke, 0, TARGET_RADIUS * 2);
-			Draw.drawRect(g, this.pos, height, (new Vec2(TARGET_RADIUS, TARGET_RADIUS)).multiply(0.33), calcDrawScale(2), colorFillRed, colorStroke, 0, TARGET_RADIUS * 2);
-		
-    }
+		Draw.drawRect(g, this.pos, height, new Vec2(TARGET_RADIUS, TARGET_RADIUS), calcDrawScale(0), colorFillRed,
+				colorStroke, TARGET_STROKE_WIDTH, TARGET_RADIUS * 2);
+		Draw.drawRect(g, this.pos, height, (new Vec2(TARGET_RADIUS, TARGET_RADIUS)).multiply(0.66), calcDrawScale(1),
+				colorFillWhite, colorStroke, 0, TARGET_RADIUS * 2);
+		Draw.drawRect(g, this.pos, height, (new Vec2(TARGET_RADIUS, TARGET_RADIUS)).multiply(0.33), calcDrawScale(2),
+				colorFillRed, colorStroke, 0, TARGET_RADIUS * 2);
+
+	}
 }
